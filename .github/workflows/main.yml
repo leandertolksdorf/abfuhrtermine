@@ -3,6 +3,7 @@ name: Download ICS File
 on:
   schedule:
     - cron: '0 0 * * 0'  # Jeden Sonntag um Mitternacht ausführen
+  workflow_dispatch:  # Ermöglicht manuelles Auslösen der Action
 
 jobs:
   download-and-commit:
