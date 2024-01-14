@@ -3,7 +3,7 @@ name: Download ICS File
 on:
   schedule:
     - cron: '0 0 * * 0'  # Jeden Sonntag um Mitternacht ausführen
-  workflow_dispatch:  # Ermöglicht manuelles Auslösen der Action
+  workflow_dispatch:
 
 jobs:
   download-and-commit:
@@ -15,7 +15,7 @@ jobs:
 
     - name: Download ICS File
       env:
-        ICS_URL: ${{ secrets.ICS_URL }}  # Verwenden des Secrets
+        ICS_URL: ${{ secrets.ICS_URL }}
       run: |
         curl -L "${ICS_URL}" -o abfuhrkalender.ics
 
@@ -26,3 +26,5 @@ jobs:
         git add abfuhrkalender.ics
         git commit -m "Update abfuhrkalender.ics"
         git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # Verwenden des PAT
