@@ -36,6 +36,12 @@ jobs:
         -H 'Cache-Control: no-cache' \
         -o abfuhrkalender.ics
 
+    - name: Convert Events to All-Day
+      run: |
+        sed -i -E 's/DTSTART;VALUE=DATE-TIME:(\d{8})T\d{6}/DTSTART;VALUE=DATE:\1/' abfuhrkalender.ics
+        sed -i -E 's/DTEND;VALUE=DATE-TIME:(\d{8})T\d{6}/DTEND;VALUE=DATE:\1/' abfuhrkalender.ics
+
+
     - name: Commit and Push
       run: |
         if [ -s abfuhrkalender.ics ]; then
