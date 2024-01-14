@@ -39,7 +39,7 @@ jobs:
     - name: Convert Events to All-Day
       run: |
         # Entfernt die Zeit- und Zeitzone-Informationen von DTSTART
-        sed -i -E 's/DTSTART;TZID=[^:]+:(\d{8})T\d{6}/DTSTART:\1/' abfuhrkalender.ics
+        sed -i 's/DTSTART;TZID=[^:]+:\([0-9]\{8\}\)T[0-9]\{6\}/DTSTART;VALUE=DATE:\1/g' abfuhrkalender.ics
         
     - name: Commit and Push
       run: |
