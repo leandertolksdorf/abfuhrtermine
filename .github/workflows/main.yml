@@ -16,8 +16,9 @@ jobs:
         token: ${{ secrets.GH_PAT }}
     - name: Get PHPSESSID
       run: |
-        session_data=$(curl -c - 'https://www.bsr.de/' | grep 'PHPSESSID' | cut -f 7)
-        echo "PHPSESSID=$session_data" >> $GITHUB_ENV
+        session_data=$(curl -c - 'https://www.bsr.de/abfuhrkalender-20520.php' | grep 'PHPSESSID' | cut -f 7)
+        echo "PHPSESSID=$session_data" >> "$GITHUB_ENV"
+        echo $session_data
 
     - name: Download ICS File
       run: |
@@ -30,7 +31,7 @@ jobs:
         -H 'DNT: 1' \
         -H 'Connection: keep-alive' \
         -H 'Referer: https://www.bsr.de/abfuhrkalender-20520.php' \
-        -H 'Cookie: PHPSESSID=aug6bnagurajp7d72vrhljf5sr' \
+        -H "Cookie: PHPSESSID=$PHPSESSID" \
         -H 'Upgrade-Insecure-Requests: 1' \
         -H 'Sec-Fetch-Dest: document' \
         -H 'Sec-Fetch-Mode: navigate' \
