@@ -12,19 +12,40 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.GH_PAT }}
 
     - name: Download ICS File
-      env:
-        ICS_URL: ${{ secrets.ICS_URL }}
       run: |
-        curl -L "${ICS_URL}" -o abfuhrkalender.ics
+        curl 'https://www.bsr.de/abfuhrkalender_ajax.php?script=dynamic_iCal_ajax&abf_strasse=Siemensstr.,%2012459%20Berlin%20(Treptow-K%C3%B6penick)&abf_hausnr=3&tab_control=Liste&abf_config_weihnachtsbaeume=&abf_config_restmuell=on&abf_config_biogut=on&abf_config_wertstoffe=on&abf_config_laubtonne=on&abf_selectmonth=1%202024&listitems=14' \
+        --compressed \
+        -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0' \
+        -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' \
+        -H 'Accept-Language: de,en-US;q=0.7,en;q=0.3' \
+        -H 'Accept-Encoding: gzip, deflate, br' \
+        -H 'DNT: 1' \
+        -H 'Connection: keep-alive' \
+        -H 'Referer: https://www.bsr.de/abfuhrkalender-20520.php' \
+        -H 'Cookie: PHPSESSID=aug6bnagurajp7d72vrhljf5sr' \
+        -H 'Upgrade-Insecure-Requests: 1' \
+        -H 'Sec-Fetch-Dest: document' \
+        -H 'Sec-Fetch-Mode: navigate' \
+        -H 'Sec-Fetch-Site: same-origin' \
+        -H 'Sec-Fetch-User: ?1' \
+        -H 'Pragma: no-cache' \
+        -H 'Cache-Control: no-cache' \
+        -o abfuhrkalender.ics
 
     - name: Commit and Push
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add abfuhrkalender.ics
-        git commit -m "Update abfuhrkalender.ics"
-        git push
+        if [ -s abfuhrkalender.ics ]; then
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add abfuhrkalender.ics
+          git commit -m "Update abfuhrkalender.ics"
+          git -c http.extraheader="AUTHORIZATION: basic ${{ secrets.GH_PAT }}" push origin HEAD:main
+        else
+          echo "Die heruntergeladene Datei ist leer."
+        fi
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # Verwenden des PAT
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
