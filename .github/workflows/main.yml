@@ -14,6 +14,10 @@ jobs:
       uses: actions/checkout@v2
       with:
         token: ${{ secrets.GH_PAT }}
+    - name: Get PHPSESSID
+      run: |
+        session_data=$(curl -c - 'https://www.bsr.de/' | grep 'PHPSESSID' | cut -f 7)
+        echo "PHPSESSID=$session_data" >> $GITHUB_ENV
 
     - name: Download ICS File
       run: |
